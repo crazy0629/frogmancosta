@@ -72,6 +72,10 @@ export async function POST(request: NextRequest) {
     const mappedData = {
       name: fullName,
       email,
+      phone,
+      instagram: instagram || undefined,
+      tiktok: tiktok || undefined,
+      website: website || undefined,
       company: website || `${fullName}'s Business`, // Use website domain or create company name
       revenue: mapRevenueToSchema(monthlyRevenue),
       challenges: helpNeeded?.length > 0 ? `Help needed with: ${helpNeeded.join(', ')}` : 'General business growth',
