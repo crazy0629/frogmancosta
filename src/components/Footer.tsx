@@ -1,5 +1,7 @@
+"use client";
+
 import { Mail, Linkedin, Twitter } from "lucide-react";
-import logo from "figma:asset/cfffbe01d59059a16a1cb3ffb2640d7acc0d3bc4.png";
+// Logo is now in public folder and will be accessed via /logo.png
 
 export function Footer() {
   return (
@@ -8,7 +10,7 @@ export function Footer() {
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="Brand Lift Co Logo" className="w-10 h-10 object-contain" />
+              <img src="/logo.png" alt="Brand Lift Co Logo" className="w-10 h-10 object-contain" />
               <div className="flex flex-col">
                 <span className="text-white">Brand Lift Co</span>
                 <span className="text-slate-400 text-xs">Performance Growth</span>
