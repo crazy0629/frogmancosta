@@ -47,7 +47,7 @@ export function AdminPanel() {
         page: page.toString(),
         limit: '10',
         ...(status !== 'all' && { status }),
-        ...(search && { search })
+        ...(search && search.trim() && { search: search.trim() })
       });
 
       const response = await fetch(`/api/applications?${params}`);
