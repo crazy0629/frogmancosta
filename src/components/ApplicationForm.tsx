@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Checkbox } from "./ui/checkbox";
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
@@ -17,73 +17,64 @@ interface ApplicationFormProps {
 
 export function ApplicationForm({ open, onOpenChange }: ApplicationFormProps) {
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
-    phone: "",
-    instagram: "",
-    tiktok: "",
-    website: "",
-    monthlyRevenue: "",
-    monthlyBudget: "",
-    helpNeeded: [] as string[],
+    company: "",
+    revenue: "",
+    challenges: "",
     goals: "",
-    agreeToEmails: false
+    timeline: "",
+    budget: ""
   });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const helpOptions = [
-    "Paid Ads",
-    "Content System",
-    "UGC / Creators",
-    "CRO / Funnels"
-  ];
-
-  const handleCheckboxChange = (option: string, checked: boolean) => {
-    if (checked) {
-      setFormData(prev => ({
-        ...prev,
-        helpNeeded: [...prev.helpNeeded, option]
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        helpNeeded: prev.helpNeeded.filter(item => item !== option)
-      }));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation
-    if (!formData.fullName || !formData.email || !formData.phone) {
+    if (!formData.name || !formData.email || !formData.company || !formData.revenue || !formData.challenges || !formData.goals || !formData.timeline || !formData.budget) {
       toast.error("Please fill in all required fields");
       return;
     }
 
-    if (!formData.agreeToEmails) {
-      toast.error("Please agree to receive emails to continue");
-      return;
-    }
-
-    // Mock submission - in real app, this would send to backend
-    console.log("Form submitted:", formData);
-    toast.success("Application submitted successfully! We'll be in touch soon.");
+    setIsSubmitting(true);
     
-    // Reset form and close dialog
-    setFormData({
-      fullName: "",
-      email: "",
-      phone: "",
-      instagram: "",
-      tiktok: "",
-      website: "",
-      monthlyRevenue: "",
-      monthlyBudget: "",
-      helpNeeded: [],
-      goals: "",
-      agreeToEmails: false
-    });
-    onOpenChange(false);
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit application');
+      }
+
+      toast.success("Application submitted successfully! We'll review it within 24 hours.");
+      
+      // Reset form and close dialog
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        revenue: "",
+        challenges: "",
+        goals: "",
+        timeline: "",
+        budget: ""
+      });
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to submit application. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -97,13 +88,13 @@ export function ApplicationForm({ open, onOpenChange }: ApplicationFormProps) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          {/* Full Name */}
+          {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name *</Label>
+            <Label htmlFor="name">Full Name *</Label>
             <Input
-              id="fullName"
-              value={formData.fullName}
-              onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="John Doe"
               required
             />
@@ -122,147 +113,111 @@ export function ApplicationForm({ open, onOpenChange }: ApplicationFormProps) {
             />
           </div>
 
-          {/* Phone Number */}
+          {/* Company */}
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number *</Label>
+            <Label htmlFor="company">Company Name *</Label>
             <Input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              placeholder="+1 (555) 123-4567"
+              id="company"
+              value={formData.company}
+              onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+              placeholder="Your Company Inc."
               required
             />
           </div>
 
-          {/* Instagram */}
+          {/* Current Revenue */}
           <div className="space-y-2">
-            <Label htmlFor="instagram">Instagram</Label>
-            <Input
-              id="instagram"
-              value={formData.instagram}
-              onChange={(e) => setFormData(prev => ({ ...prev, instagram: e.target.value }))}
-              placeholder="@yourbrand"
-            />
-          </div>
-
-          {/* TikTok */}
-          <div className="space-y-2">
-            <Label htmlFor="tiktok">TikTok</Label>
-            <Input
-              id="tiktok"
-              value={formData.tiktok}
-              onChange={(e) => setFormData(prev => ({ ...prev, tiktok: e.target.value }))}
-              placeholder="@yourbrand"
-            />
-          </div>
-
-          {/* Website */}
-          <div className="space-y-2">
-            <Label htmlFor="website">Website (if any)</Label>
-            <Input
-              id="website"
-              type="url"
-              value={formData.website}
-              onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
-              placeholder="https://yourbrand.com"
-            />
-          </div>
-
-          {/* Monthly Revenue */}
-          <div className="space-y-2">
-            <Label htmlFor="monthlyRevenue">Monthly Revenue</Label>
+            <Label htmlFor="revenue">Current Monthly Revenue *</Label>
             <Select
-              value={formData.monthlyRevenue}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, monthlyRevenue: value }))}
+              value={formData.revenue}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, revenue: value }))}
             >
-              <SelectTrigger id="monthlyRevenue">
-                <SelectValue placeholder="Select monthly revenue" />
+              <SelectTrigger id="revenue">
+                <SelectValue placeholder="Select current revenue" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-                <SelectItem value="less-than-10k">&lt;$10k</SelectItem>
-                <SelectItem value="10k-50k">$10k ~ $50k</SelectItem>
-                <SelectItem value="50k-200k">$50k ~ $200k</SelectItem>
-                <SelectItem value="more-than-200k">+$200k</SelectItem>
+                <SelectItem value="Under $10K/month">Under $10K/month</SelectItem>
+                <SelectItem value="$10K-50K/month">$10K-50K/month</SelectItem>
+                <SelectItem value="$50K-100K/month">$50K-100K/month</SelectItem>
+                <SelectItem value="$100K-500K/month">$100K-500K/month</SelectItem>
+                <SelectItem value="$500K-1M/month">$500K-1M/month</SelectItem>
+                <SelectItem value="Over $1M/month">Over $1M/month</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Monthly Budget */}
+          {/* Budget */}
           <div className="space-y-2">
-            <Label htmlFor="monthlyBudget">Monthly Budget</Label>
+            <Label htmlFor="budget">Marketing Budget *</Label>
             <Select
-              value={formData.monthlyBudget}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, monthlyBudget: value }))}
+              value={formData.budget}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, budget: value }))}
             >
-              <SelectTrigger id="monthlyBudget">
-                <SelectValue placeholder="Select" />
+              <SelectTrigger id="budget">
+                <SelectValue placeholder="Select marketing budget" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1k-2.5k">$1k ~ $2.5k</SelectItem>
-                <SelectItem value="2.5k-5k">$2.5k ~ $5k</SelectItem>
-                <SelectItem value="5k-10k">$5k ~ $10k</SelectItem>
-                <SelectItem value="10k-plus">$10k +</SelectItem>
+                <SelectItem value="Under $5K/month">Under $5K/month</SelectItem>
+                <SelectItem value="$5K-15K/month">$5K-15K/month</SelectItem>
+                <SelectItem value="$15K-30K/month">$15K-30K/month</SelectItem>
+                <SelectItem value="$30K-50K/month">$30K-50K/month</SelectItem>
+                <SelectItem value="Over $50K/month">Over $50K/month</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* What do you need help with? */}
-          <div className="space-y-3">
-            <Label>What do you need help with?</Label>
-            <div className="space-y-3">
-              {helpOptions.map((option) => (
-                <div key={option} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={option}
-                    checked={formData.helpNeeded.includes(option)}
-                    onCheckedChange={(checked) => handleCheckboxChange(option, checked as boolean)}
-                  />
-                  <label
-                    htmlFor={option}
-                    className="text-slate-700 cursor-pointer select-none"
-                  >
-                    {option}
-                  </label>
-                </div>
-              ))}
-            </div>
+          {/* Timeline */}
+          <div className="space-y-2">
+            <Label htmlFor="timeline">Project Timeline *</Label>
+            <Select
+              value={formData.timeline}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, timeline: value }))}
+            >
+              <SelectTrigger id="timeline">
+                <SelectValue placeholder="When do you want to start?" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ASAP (Within 30 days)">ASAP (Within 30 days)</SelectItem>
+                <SelectItem value="1-3 months">1-3 months</SelectItem>
+                <SelectItem value="3-6 months">3-6 months</SelectItem>
+                <SelectItem value="6+ months">6+ months</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Challenges */}
+          <div className="space-y-2">
+            <Label htmlFor="challenges">What are your biggest challenges? *</Label>
+            <Textarea
+              id="challenges"
+              value={formData.challenges}
+              onChange={(e) => setFormData(prev => ({ ...prev, challenges: e.target.value }))}
+              placeholder="e.g., High customer acquisition costs, low conversion rates, scaling issues..."
+              rows={4}
+              required
+            />
           </div>
 
           {/* Goals */}
           <div className="space-y-2">
-            <Label htmlFor="goals">Goals (next 90 days)</Label>
+            <Label htmlFor="goals">What are your main goals? *</Label>
             <Textarea
               id="goals"
               value={formData.goals}
               onChange={(e) => setFormData(prev => ({ ...prev, goals: e.target.value }))}
-              placeholder="e.g., decrease CAC by 20%, add 2 new offers, 100 qualified leads/mo"
+              placeholder="e.g., Decrease CAC by 25%, scale to $500K/month, launch 2 new product lines..."
               rows={4}
+              required
             />
-          </div>
-
-          {/* Consent Checkbox */}
-          <div className="flex items-start space-x-2 bg-slate-50 p-4 rounded-lg border border-slate-200">
-            <Checkbox
-              id="agreeToEmails"
-              checked={formData.agreeToEmails}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, agreeToEmails: checked as boolean }))}
-            />
-            <label
-              htmlFor="agreeToEmails"
-              className="text-sm text-slate-700 cursor-pointer select-none leading-relaxed"
-            >
-              I agree to receive emails about my application and growth audit.
-            </label>
           </div>
 
           {/* Submit Button */}
           <Button 
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-xl hover:shadow-blue-600/40"
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-xl hover:shadow-blue-600/40 disabled:opacity-50"
           >
-            Submit Application
+            {isSubmitting ? "Submitting..." : "Submit Application"}
           </Button>
         </form>
       </DialogContent>
