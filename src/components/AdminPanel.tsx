@@ -60,7 +60,7 @@ export function AdminPanel() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [statusFilter, searchQuery]);
 
   useEffect(() => {
     fetchApplications();
