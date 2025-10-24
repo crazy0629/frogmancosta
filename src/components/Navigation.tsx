@@ -1,7 +1,9 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { ApplicationForm } from "./ApplicationForm";
-import logo from "figma:asset/cfffbe01d59059a16a1cb3ffb2640d7acc0d3bc4.png";
+// Logo is now in public folder and will be accessed via /logo.png
 
 export function Navigation() {
   const [applicationOpen, setApplicationOpen] = useState(false);
@@ -12,7 +14,7 @@ export function Navigation() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="Brand Lift Co Logo" className="w-11 h-11 object-contain" />
+              <img src="/logo.png" alt="Brand Lift Co Logo" className="w-11 h-11 object-contain" />
               <div className="flex flex-col">
                 <span className="text-slate-900 tracking-tight leading-none">Brand Lift Co</span>
                 <span className="text-slate-500 text-xs">Performance Growth</span>
