@@ -1,3 +1,5 @@
+"use client";
+
 import { Mail, Linkedin, Twitter } from "lucide-react";
 // Logo is now in public folder and will be accessed via /logo.png
 
