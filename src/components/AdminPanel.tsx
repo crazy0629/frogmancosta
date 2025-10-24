@@ -116,11 +116,15 @@ export function AdminPanel() {
       const result = await response.json();
       
       const csvContent = [
-        ["Name", "Email", "Company", "Revenue", "Budget", "Status", "Submitted At"].join(","),
+        ["Name", "Email", "Phone", "Instagram", "TikTok", "Website", "Company", "Revenue", "Budget", "Status", "Submitted At"].join(","),
         ...result.applications.map((app: IApplication) =>
           [
             app.name,
             app.email,
+            app.phone,
+            app.instagram || '',
+            app.tiktok || '',
+            app.website || '',
             app.company,
             app.revenue,
             app.budget,
@@ -285,6 +289,7 @@ export function AdminPanel() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Applicant</TableHead>
+                    <TableHead>Contact Info</TableHead>
                     <TableHead>Company</TableHead>
                     <TableHead>Revenue</TableHead>
                     <TableHead>Budget</TableHead>
@@ -300,6 +305,20 @@ export function AdminPanel() {
                         <div>
                           <div className="font-medium text-slate-900">{app.name}</div>
                           <div className="text-sm text-slate-500">{app.email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm space-y-1">
+                          <div className="text-slate-900">{app.phone}</div>
+                          {app.instagram && (
+                            <div className="text-slate-600">📷 {app.instagram}</div>
+                          )}
+                          {app.tiktok && (
+                            <div className="text-slate-600">🎵 {app.tiktok}</div>
+                          )}
+                          {app.website && (
+                            <div className="text-slate-600">🌐 {app.website}</div>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -404,6 +423,28 @@ export function AdminPanel() {
                     <div className="text-sm text-slate-500 mb-1">Email</div>
                     <div className="text-slate-900">{selectedApplication.email}</div>
                   </div>
+                  <div>
+                    <div className="text-sm text-slate-500 mb-1">Phone</div>
+                    <div className="text-slate-900">{selectedApplication.phone}</div>
+                  </div>
+                  {selectedApplication.instagram && (
+                    <div>
+                      <div className="text-sm text-slate-500 mb-1">Instagram</div>
+                      <div className="text-slate-900">{selectedApplication.instagram}</div>
+                    </div>
+                  )}
+                  {selectedApplication.tiktok && (
+                    <div>
+                      <div className="text-sm text-slate-500 mb-1">TikTok</div>
+                      <div className="text-slate-900">{selectedApplication.tiktok}</div>
+                    </div>
+                  )}
+                  {selectedApplication.website && (
+                    <div>
+                      <div className="text-sm text-slate-500 mb-1">Website</div>
+                      <div className="text-slate-900">{selectedApplication.website}</div>
+                    </div>
+                  )}
                   <div>
                     <div className="text-sm text-slate-500 mb-1">Company</div>
                     <div className="text-slate-900">{selectedApplication.company}</div>

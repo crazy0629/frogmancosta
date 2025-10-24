@@ -4,6 +4,10 @@ export interface IApplication {
   _id?: string;
   name: string;
   email: string;
+  phone: string;
+  instagram?: string;
+  tiktok?: string;
+  website?: string;
   company: string;
   revenue: string;
   challenges: string;
@@ -32,6 +36,27 @@ const ApplicationSchema = new mongoose.Schema<IApplication>({
       /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
       'Please enter a valid email'
     ]
+  },
+  phone: {
+    type: String,
+    required: [true, 'Phone number is required'],
+    trim: true,
+    maxlength: [20, 'Phone number cannot be more than 20 characters']
+  },
+  instagram: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'Instagram handle cannot be more than 50 characters']
+  },
+  tiktok: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'TikTok handle cannot be more than 50 characters']
+  },
+  website: {
+    type: String,
+    trim: true,
+    maxlength: [200, 'Website URL cannot be more than 200 characters']
   },
   company: {
     type: String,
